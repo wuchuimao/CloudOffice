@@ -1,4 +1,4 @@
-# CloudOffice
+#CloudOffice
 [一、项目介绍](#一、项目介绍)<br>
 [二、搭建环境](#二、搭建环境)<br>
 [1.项目模块](#1.项目模块)<br>
@@ -17,8 +17,8 @@
 项目服务器端架构：SpringBoot，MybatisPlus，SpringSecurity，Redis，Activiti，MySQL<br>
 前端架构：vue-admin-template，Node.js， Npm，ElementUI，Axios<br>
 
-## 二、搭建环境
-### 1.项目模块
+##二、搭建环境
+###1.项目模块
 cloud-office：根目录，管理子模块<br>
 ​    cmomon：公共类父模块<br>
 ​	common-util：核心工具类<br>
@@ -26,8 +26,8 @@ cloud-office：根目录，管理子模块<br>
 ​	spring-security：spring-security业务模块<br>
 ​     model：实体类模块<br>
 ​     service-co：系统服务模块<br>
-### 2.配置依赖
-#### 2.1cloud-office中的pom.xml文件，管理依赖版本
+###2.配置依赖
+####2.1cloud-office中的pom.xml文件，管理依赖版本
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
