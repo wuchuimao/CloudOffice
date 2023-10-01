@@ -8,7 +8,7 @@
 [2.3 common-util模块](#2.3common-util模块)<br>
 [2.4 service-util模块](#2.4service-util模块)<br>
 [2.5 security-util模块](#2.5security-util模块)<br>
-## 一、项目介绍
+##一、项目介绍
 系统主要包括：管理端和员工端<br>
 
 管理端包含：基于角色的权限管理，审批管理，公众号菜单管理。<br>
@@ -119,7 +119,7 @@ cloud-office：根目录，管理子模块<br>
 
 </project>
 ```
-#### 2.2common公共父模块
+####2.2common公共父模块
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -141,7 +141,7 @@ cloud-office：根目录，管理子模块<br>
     </modules>
 </project>
 ```
-#### 2.3common-util模块
+####2.3common-util模块
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -195,7 +195,7 @@ cloud-office：根目录，管理子模块<br>
     </dependencies>
 </project>
 ```
-#### 2.4service-util模块
+####2.4service-util模块
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -247,7 +247,7 @@ cloud-office：根目录，管理子模块<br>
     </dependencies>
 </project>
 ```
-#### 2.5security-util模块
+####2.5security-util模块
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
