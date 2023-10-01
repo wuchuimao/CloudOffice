@@ -20,12 +20,12 @@
 ## 二、搭建环境
 ### 1.项目模块
 * cloud-office：根目录，管理子模块<br>
-   * cmomon：公共类父模块<br>
-​	   * common-util：核心工具类<br>
-​	   * service-util：service模块工具类<br>
-​	   * spring-security：spring-security业务模块<br>
-​   * model：实体类模块<br>
-​   * service-co：系统服务模块<br>
+    * cmomon：公共类父模块<br>
+        * common-util：核心工具类<br>
+        * service-util：service模块工具类<br>
+​	     * spring-security：spring-security业务模块<br>
+    * model：实体类模块<br>
+    * service-co：系统服务模块<br>
 ### 2.配置依赖
 依赖配置查看文件 /参考文件/配置依赖.md
 ### 3.数据库创建
