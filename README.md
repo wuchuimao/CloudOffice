@@ -30,9 +30,10 @@ cloud-office：根目录，管理子模块<br>
 依赖配置查看文件 /参考文件/配置依赖.md
 ### 3.数据库创建
 使用SQLyog执行 /database/表结构.sql 文件，创建所需要的表。<br>
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.fig)<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.jpg)<br>
 ## 三、前端界面
-管理端的前端界面配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。
+管理端的前端界面配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/front.jpg)<br>
 ## 四、后端功能实现
 ### 1.用户管理
 ### 2.菜单管理
