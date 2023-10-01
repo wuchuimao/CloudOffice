@@ -23,7 +23,7 @@
     * cmomon：公共类父模块<br>
         * common-util：核心工具类<br>
         * service-util：service模块工具类<br>
-​	     * spring-security：spring-security业务模块<br>
+        * spring-security：spring-security业务模块<br>
     * model：实体类模块<br>
     * service-co：系统服务模块<br>
 ### 2.配置依赖
