@@ -1,8 +1,13 @@
 # CloudOffice
-[一、项目介绍](#一、项目介绍)<br>
-[二、搭建环境](#二、搭建环境)<br>
->[1.项目模块](#1.项目模块)
->[2.配置依赖](#2.配置依赖)
+>[一、项目介绍](#一、项目介绍)<br>
+>[二、搭建环境](#二、搭建环境)<br>
+>>[1.项目模块](#1.项目模块)<br>
+>>[2.配置依赖](#2.配置依赖)<br>
+>>>[2.1 cloud-office中的pom.xml文件，管理依赖版本](#2.1 cloud-office中的pom.xml文件，管理依赖版本)<br>
+>>>[2.2 common公共父模块](#2.2 common公共父模块)<br>
+>>>[2.3 common-util模块](#2.3 common-util模块)
+>>>[2.4 service-util模块](#2.4 service-util模块)
+>>>[2.5 security-util模块](#2.5 security-util模块)
 ## 一、项目介绍
 系统主要包括：管理端和员工端<br>
 
@@ -15,14 +20,14 @@
 ## 二、搭建环境
 ### 1.项目模块
 cloud-office：根目录，管理子模块<br>
-​		cmomon：公共类父模块<br>
-​				common-util：核心工具类<br>
-​				service-util：service模块工具类<br>
-​				spring-security：spring-security业务模块<br>
-​		model：实体类模块<br>
-​		service-co：系统服务模块<br>
+​    cmomon：公共类父模块<br>
+​	common-util：核心工具类<br>
+​	service-util：service模块工具类<br>
+​	spring-security：spring-security业务模块<br>
+​     model：实体类模块<br>
+​     service-co：系统服务模块<br>
 ### 2.配置依赖
-cloud-office中的pom.xml文件，管理依赖版本。
+#### 2.1 cloud-office中的pom.xml文件，管理依赖版本
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -112,5 +117,176 @@ cloud-office中的pom.xml文件，管理依赖版本。
         </plugins>
     </build>
 
+</project>
+```
+#### 2.2 common公共父模块
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cloud_office</artifactId>
+        <groupId>com.wu</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>common</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>common-util</module>
+        <module>service-util</module>
+        <module>security-util</module>
+    </modules>
+</project>
+```
+#### 2.3 common-util模块
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>common</artifactId>
+        <groupId>com.wu</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>common-util</artifactId>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided </scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
+        <!-- Spring Security依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!--lombok用来简化实体类-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!--引入activiti的springboot启动器 -->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring-boot-starter</artifactId>
+            <version>7.1.0.M6</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mybatis</artifactId>
+                    <groupId>org.mybatis</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+    </dependencies>
+</project>
+```
+#### 2.4 service-util模块
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>common</artifactId>
+        <groupId>com.wu</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>service-util</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.wu</groupId>
+            <artifactId>common-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!--spring spring mvc-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--mybatis_plus-plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+<!--            <scope>provided </scope>-->
+        </dependency>
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--数据源-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
+        <!--用来做调试，比如测试各种请求方式，通过http://localhost:8800/doc.html访问-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+</project>
+```
+#### 2.5 security-util模块
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>common</artifactId>
+        <groupId>com.wu</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>security-util</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.wu</groupId>
+            <artifactId>common-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wu</groupId>
+            <artifactId>model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wu</groupId>
+            <artifactId>service-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- redis依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided </scope>
+        </dependency>
+    </dependencies>
 </project>
 ```
