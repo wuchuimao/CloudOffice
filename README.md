@@ -23,7 +23,7 @@ cloud-office：根目录，管理子模块<br>
 ​		service-co：系统服务模块<br>
 ### 2.配置依赖
 cloud-office中的pom.xml文件，管理依赖版本。
-···xml
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -113,4 +113,4 @@ cloud-office中的pom.xml文件，管理依赖版本。
     </build>
 
 </project>
-···
+```
