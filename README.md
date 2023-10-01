@@ -18,7 +18,7 @@
 项目服务器端架构：SpringBoot，MybatisPlus，SpringSecurity，Redis，Activiti，MySQL<br>
 前端架构：vue-admin-template，Node.js， Npm，ElementUI，Axios<br>
 ## 二、搭建环境
-###1.项目模块
+### 1.项目模块
 cloud-office：根目录，管理子模块<br>
    cmomon：公共类父模块<br>
 ​	   common-util：核心工具类<br>
