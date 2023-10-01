@@ -1,8 +1,8 @@
 # CloudOffice
 * [一、项目介绍](#一项目介绍)<br>
 * [二、搭建环境](#二搭建环境)<br>
-       * [1.项目模块](#1项目模块)<br>
-       * [2.配置依赖](#2配置依赖)<br>
+    * [1.项目模块](#1项目模块)<br>
+    * [2.配置依赖](#2配置依赖)<br>
               * [2.1 cloud-office中的pom.xml文件，管理依赖版本](#21cloud-office中的pom.xml文件，管理依赖版本)<br>
               * [2.2 common公共父模块](#22common公共父模块)<br>
               * [2.3 common-util模块](#23common-util模块)<br>
