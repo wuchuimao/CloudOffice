@@ -8,7 +8,7 @@
 >>>[2.3 common-util模块](#23common-util模块)<br>
 >>>[2.4 service-util模块](#24service-util模块)<br>
 >>>[2.5 security-util模块](#25security-util模块)<br>
->>[3.数据库创建](#3数据库创建)
+>>[3.数据库创建](#3数据库创建)<br>
 ## 一、项目介绍
 系统主要包括：管理端和员工端<br>
 
