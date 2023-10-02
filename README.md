@@ -57,7 +57,7 @@
 菜单管理的相关操作在service-co模块中的com.wu.auth.controller包下的SysRoleController.java中<br>
 和用户管理类似，包含条件分页查询，角色的添加，修改，删除，以及给角色分配菜单。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/role.jpg)<br>
-在给角色分配菜单权限时，需要将从数据库中查询的菜单构建成前端显示的树形结构。<br>
+在给角色分配菜单权限时，需要将从数据库中查询的菜单构建成前端显示的树形结构（根据menu表中的parent_id判断层级,根据封装menu数据的SysMenu类型中的isSelect判断是否显示选中该权限）。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/role-tree.jpg)<br>
 ### 3.菜单管理
 菜单管理的相关操作在service-co模块中的com.wu.auth.controller包下的SysMenuController.java中<br>
@@ -130,3 +130,185 @@ HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(claims), secret)    =
 </dependency>
 ```
 在common-util模块中的com.wu.common.jwt包下的JwtHelper.java中实现生成token和解析token<br>
+#### 4.2用户登入
+代码在service-co模块中的com.wu.auth.controller包下的IndexController.java中<br>
+通过用户名查询用户，判断用户是否存在和对比用户密码和登入密码是否一致，用户存在且密码一致则通过JWT根据用户id和用户名生成token，并将token返回，浏览器会将token放置与请求头中。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login.jpg)<br>
+数据库中的用户密码是用MD5加密过的，所以对比过程中登入密码也要进行MD5加密后在对比；Result类型是设计为返回json数据进行封装使用的。<br>
+#### 4.3获取用户信息
+代码在service-co模块中的com.wu.auth.controller包下的IndexController.java中<br>
+登入成功后，接受浏览器发来的token，并通过JWT进行解析，获取用户名，再通过用户名获取对应user，然后获取该user对应的角色，在通过角色获取对应的菜单权限和按钮权限，将信息存在map中并最后封装为Result类型返回。<br>
+**通过用户名最终获取菜单权限和按钮权限，是通过三表联合查询，分别为user表，role表，menu表，三张表的联合查询是通过两张中间表进行连接，分别为sys_role_menu，sys_user_role**<br>
+在controller中<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/info.jpg)<br>
+在service中<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/info-service.jpg)<br>
+**根据用户权限查询的菜单权限和按钮权限构建前端对应的路由界面**<br>
+admin用户显示的的界面（所有权限都有）<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/admin-permission.jpg)<br>
+wjl用户显示的界面（只有用户管理和菜单管理的部分权限）
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/wjl-permission.jpg)<br>
+#### 4.4SpringSecurity
+Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案， SpringSecurity 重要核心功能为用户认证指和用户授权。<br>
+用户认证指的是：验证某个用户是否为系统中的合法主体，也就是说用户能否访问该系统。用户认证一般要求用户提供用户名和密码，系统通过校验用户名和密码来完成认证过程。<br>
+**通俗点说就是系统认为用户是否能登录**<br>
+用户授权指的是验证某个用户是否有权限执行某个操作。在一个系统中，不同用户所具有的权限是不同的。比如对一个文件来说，有的用户只能进行读取，而有的用户可以进行修改。一般来说，系统会为不同的用户分配不同的角色，而每个角色则对应一系列的权限。<br>
+**通俗点讲就是系统判断用户是否有权限去做某些事情**<br>
+Spring Security进行认证和授权的时候,就是利用的一系列的Filter来进行拦截的。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/security-filter.jpg)<br>
+如图所示，一个请求想要访问到API就会从左到右经过蓝线框里的过滤器，其中**绿色部分是负责认证的过滤器，蓝色部分是负责异常处理，橙色部分则是负责授权**。<br>
+这里面我们只需要重点关注两个过滤器即可：`UsernamePasswordAuthenticationFilter`负责登录认证，`FilterSecurityInterceptor`负责权限授权。<br>
+在security-util模块中配置SpringSecurity。<br>
+添加依赖<br>
+```xml
+  <!-- Spring Security依赖 -->
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+  </dependency>
+```
+依赖包（spring-boot-starter-security）导入后，Spring Security就默认提供了许多功能将整个应用给保护了起来：<br>
+​	1、要求经过身份验证的用户才能与应用程序进行交互<br>
+​	2、创建好了默认登录表单<br>
+​	3、生成用户名为`user`的随机密码并打印在控制台上<br>
+​	等等......<br>
+添加配置类
+```Java
+@Configuration
+@EnableWebSecurity //@EnableWebSecurity是开启SpringSecurity的默认行为
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+}
+```
+**4.4.1用户认证**<br>
+用户认证流程图：<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/user-permission.jpg)<br>
+**Spring Security中三个核心组件**<br>
+​	1、`Authentication`：存储了认证信息，代表当前登录用户<br>
+​	2、`SeucirtyContext`：上下文对象，用来获取`Authentication`<br>
+​	3、`SecurityContextHolder`：上下文管理对象，用来在程序任何地方获取`SecurityContext`<br>
+**`Authentication`中的信息**<br>
+​	1、`Principal`：用户信息，没有认证时一般是用户名，认证后一般是用户对象<br>
+​	2、`Credentials`：用户凭证，一般是密码<br>
+​	3、`Authorities`：用户权限<br>
+我们需要通过 **`SecurityContext`** 来获取`Authentication`，`SecurityContext`就是我们的上下文对象！这个上下文对象则是交由 **`SecurityContextHolder`** 进行管理，你可以在程序**任何地方**使用它：<br>
+```
+Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+```
+`SecurityContextHolder`原理非常简单，就是使用`ThreadLocal`来保证一个线程中传递同一个对象！<br>
+**用户认证**<br>
+**`AuthenticationManager`** 就是Spring Security用于执行身份验证的组件，只需要调用它的`authenticate`方法即可完成认证。<br>
+`AuthenticationManager`的校验逻辑<br>
+   1.`UserDetialsService`根据用户名查询出用户对象，该接口只有一个方法`loadUserByUsername(String username)`，通过用户名查询用户对象，默认实现是在内存中查询。<br>
+   2.查询出来的 **用户对象** 是由**`UserDetails`**来封装，该接口中提供了账号、密码等通用属性。<br>
+   3.PasswordEncoder组件对密码进行校验。<br>
+这里我们自定义实现UserDetialsService，UserDetails，PasswordEncoder三个组件，分别为UserDetailsServiceImpl，CustomUser，CustomMd5PasswordEncoder，存放于security-util模块中的com.wu.security.custom包下。<br>
+UserDetailsServiceImpl实现UserDetialsService接口，CustomUser继承org.springframework.security.core.userdetails.User，CustomMd5PasswordEncoder实现PasswordEncoder接口<br>
+
+自定义用户认证接口TokenLoginFilter继承UsernamePasswordAuthenticationFilter
+```Java
+package com.wu.security.fillter;
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wu.common.jwt.JwtHelper;
+import com.wu.common.result.Result;
+import com.wu.common.result.ResultCodeEnum;
+import com.wu.common.util.ResponseUtil;
+import com.wu.security.custom.CustomUser;
+import com.wu.vo.system.LoginVo;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @ Author     ：ChuiMao Wu
+ * @ create     : 2023-04-08 19:21
+ * @ Description：
+ */
+public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
+    private RedisTemplate redisTemplate;
+
+    public TokenLoginFilter(AuthenticationManager authenticationManager, RedisTemplate redisTemplate) {
+        this.setAuthenticationManager(authenticationManager);
+        this.setPostOnly(false);
+        //指定登录接口及提交方式，可以指定任意路径
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index/login","POST"));
+        this.redisTemplate = redisTemplate;
+    }
+
+    /**
+     * 登录认证
+     * @param req
+     * @param res
+     * @return
+     * @throws AuthenticationException
+     */
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
+            throws AuthenticationException {
+        try {
+            //获取用户信息
+            LoginVo loginVo = new ObjectMapper().readValue(req.getInputStream(), LoginVo.class);
+            //封装对象
+            Authentication authenticationToken = new UsernamePasswordAuthenticationToken(loginVo.getUsername(), loginVo.getPassword());
+            //认证并返回,
+            // authenticate()里面会通过authenticationToken中的userName查询数据库中对应的信息(包括权限)，并将信息封装再customUser中，
+            // 然后CustomMd5PasswordEncoder对密码进行校验,校验完将user信息封装在Authentication中，然后进行下一步的操作。
+            return this.getAuthenticationManager().authenticate(authenticationToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * 登录成功
+     * @param request
+     * @param response
+     * @param chain
+     * @param auth
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
+        //获取当前用户
+        CustomUser customUser = (CustomUser) auth.getPrincipal();
+        //生成token
+        String token = JwtHelper.createToken(customUser.getSysUser().getId(), customUser.getSysUser().getUsername());
+        //保存权限数据
+        redisTemplate.opsForValue().set(customUser.getUsername(), JSON.toJSONString(customUser.getAuthorities()));
+        Map<String, Object> map = new HashMap<>();
+//        System.out.println(".........................登入成功");
+        map.put("token", token);
+        ResponseUtil.out(response, Result.ok(map));
+    }
+
+    /**
+     * 登录失败
+     * @param request
+     * @param response
+     * @param e
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException e) throws IOException, ServletException {
+        ResponseUtil.out(response, Result.build(null, ResultCodeEnum.LOGIN_ERROR));
+    }
+}
+```
+
+**4.4.2用户授权**<br>
