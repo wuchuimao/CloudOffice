@@ -9,6 +9,7 @@
     * [1.用户管理](#1用户管理)
     * [2.角色管理](#2角色管理)
     * [3.菜单管理](#3菜单管理)
+    * [4.权限管理](#4权限管理)
 ## 一、项目介绍
 系统主要包括：管理端和员工端<br>
 
@@ -33,11 +34,11 @@
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.jpg)<br>
 ## 三、前端界面
 前端界面在 cloud_office_front中。<br>
-角色管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目；<br>
+管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目；<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.jpg)<br>
-角色管理端登入界面<br>
+管理端登入界面<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login.jpg)<br>
-角色管理端界面<br>
+管理端界面<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/front.jpg)<br>
 前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目；
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/web.jpg)<br>
@@ -46,5 +47,19 @@
 前端界面具体配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。<br>
 ## 四、后端功能实现
 ### 1.用户管理
-### 2.菜单管理
-### 3.权限管理
+用户管理的相关操作在service-co模块中的com.wu.auth.controller包下的SysUserController.java中<br>
+包含了用户的条件分页查询，用户的添加，修改，删除以及给用户分配角色。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/user.jpg)<br>
+给用户分配角色，是先查询角色表中的所有角色，然后根据用户id在用户-角色的表中查询用户所具有的角色id，再通过角色id获取用户拥有的角色并封装在map中。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/user-controller.jpg)<br>
+### 2.角色管理
+菜单管理的相关操作在service-co模块中的com.wu.auth.controller包下的SysRoleController.java中<br>
+和用户管理类似，包含条件分页查询，角色的添加，修改，删除，以及给角色分配菜单。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/role.jpg)<br>
+在给角色分配菜单权限时，需要将从数据库中查询的菜单构建成前端显示的树形结构。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/role-tree.jpg)<br>
+### 3.菜单管理
+菜单管理的相关操作在service-co模块中的com.wu.auth.controller包下的SysMenuController.java中<br>
+包含了菜单的增删改查，其中从数据库中查询的菜单列表需要转换为前端显示的树形结构；删除菜单时需要判断有无下一级菜单，只有没有下一级菜单或者按钮时才能删除。
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/menu.jpg)<br>
+### 4.权限管理
