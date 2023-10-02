@@ -19,7 +19,7 @@
 前端架构：vue-admin-template，Node.js， Npm，ElementUI，Axios<br>
 ## 二、搭建环境
 ### 1.项目模块
-* cloud-office：根目录，管理子模块<br>
+* cloud_office：根目录，管理子模块<br>
     * cmomon：公共类父模块<br>
         * common-util：核心工具类<br>
         * service-util：service模块工具类<br>
@@ -32,8 +32,18 @@
 使用SQLyog执行 /database/表结构.sql 文件，创建所需要的表。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.jpg)<br>
 ## 三、前端界面
-管理端的前端界面配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。<br>
+前端界面在 cloud_office_front中。<br>
+角色管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目；<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.jpg)<br>
+角色管理端登入界面<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login.jpg)<br>
+角色管理端界面<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/front.jpg)<br>
+前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目；
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/web.jpg)<br>
+前端审批界面
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approve.jpg)<br>
+前端界面具体配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。<br>
 ## 四、后端功能实现
 ### 1.用户管理
 ### 2.菜单管理
