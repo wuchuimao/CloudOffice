@@ -65,24 +65,24 @@
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/menu.jpg)<br>
 ### 4.权限管理
 菜单管理的相关操作在security-util模块中的com.wu.security包下和service-co模块中的com.wu.auth.controller包下的IndexController.java中<br>
-本项目需要实现的权限分为菜单权限和按钮权限
-菜单权限：
-菜单权限就是对页面的控制，就是有这个权限的用户才能访问这个页面，没这个权限的用户就无法访问，它是以整个页面为维度，对权限的控制并没有那么细，所以是一种**粗颗粒权限**。
+本项目需要实现的权限分为菜单权限和按钮权限<br>
+菜单权限：<br>
+菜单权限就是对页面的控制，就是有这个权限的用户才能访问这个页面，没这个权限的用户就无法访问，它是以整个页面为维度，对权限的控制并没有那么细，所以是一种**粗颗粒权限**。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/menu-permissions.jpg)<br>
-按钮权限：
-按钮权限就是将页面的**操作**视为资源，比如删除操作，有些人可以操作有些人不能操作。对于后端来说，操作就是一个接口。于前端来说，操作往往是一个按钮，是一种**细颗粒权限**。
+按钮权限：<br>
+按钮权限就是将页面的**操作**视为资源，比如删除操作，有些人可以操作有些人不能操作。对于后端来说，操作就是一个接口。于前端来说，操作往往是一个按钮，是一种**细颗粒权限**。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/button-permission.jpg)<br>
-通过实现两个接口来实现权限管理：
-1.用户登入，根据用户名和密码判断是否存在该用户，存在则通过用户id和用户名生成对应的token
-2.登入成功，根据token获取用户相关信息（菜单权限以及按钮权限等）
+通过实现两个接口来实现权限管理：<br>
+1.用户登入，根据用户名和密码判断是否存在该用户，存在则通过用户id和用户名生成对应的token<br>
+2.登入成功，根据token获取用户相关信息（菜单权限以及按钮权限等）<br>
 #### 4.1JWT生成token和解析token
 JWT是JSON Web Token的缩写，即JSON Web令牌，是一种自包含令牌。 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准。
 JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源。比如用在用户登录上。
 JWT最重要的作用就是对 token信息的防伪作用。<br>
 一个JWT由三个部分组成：**JWT头、有效载荷、签名哈希**，最后由这三者组合进行base64url编码得到JWTtoken，典型的，一个JWT看起来如下图：该对象为一个很长的字符串，字符之间通过"."分隔符分为三个子串。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/jwt.jpg)<br>
-**JWT头**
-JWT头部分是一个描述JWT元数据的JSON对象，通常如下所示。
+**JWT头**<br>
+JWT头部分是一个描述JWT元数据的JSON对象，通常如下所示。<br>
 ```
 {
   "alg": "HS256",
