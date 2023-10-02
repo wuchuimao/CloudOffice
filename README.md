@@ -66,10 +66,10 @@
 ### 4.权限管理
 菜单管理的相关操作在security-util模块中的com.wu.security包下和service-co模块中的com.wu.auth.controller包下的IndexController.java中<br>
 本项目需要实现的权限分为菜单权限和按钮权限<br>
-菜单权限：<br>
+**菜单权限**<br>
 菜单权限就是对页面的控制，就是有这个权限的用户才能访问这个页面，没这个权限的用户就无法访问，它是以整个页面为维度，对权限的控制并没有那么细，所以是一种**粗颗粒权限**。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/menu-permissions.jpg)<br>
-按钮权限：<br>
+**按钮权限**<br>
 按钮权限就是将页面的**操作**视为资源，比如删除操作，有些人可以操作有些人不能操作。对于后端来说，操作就是一个接口。于前端来说，操作往往是一个按钮，是一种**细颗粒权限**。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/button-permission.jpg)<br>
 通过实现两个接口来实现权限管理：<br>
