@@ -11,6 +11,9 @@
     * [3.菜单管理](#3菜单管理)
     * [4.权限管理](#4权限管理)
         * [4.1JWT生成token和解析token](#41JWT生成token和解析token)
+        * [4.2用户登入](#42用户登入)
+        * [4.3获取用户信息](#43获取用户信息)
+        * [4.4SpringSecurity](#44SpringSecurit)
 ## 一、项目介绍
 系统主要包括：管理端和员工端<br>
 
@@ -148,7 +151,9 @@ admin用户显示的的界面（所有权限都有）<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/admin-permission.jpg)<br>
 wjl用户显示的界面（只有用户管理和菜单管理的部分权限）
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/wjl-permission.jpg)<br>
-#### 4.4SpringSecurity
+未使用SpringSecurity时访问存在问题
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/IndexController.jpg)<br>
+#### 4.4SpringSecurity<br>
 Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案， SpringSecurity 重要核心功能为用户认证指和用户授权。<br>
 用户认证指的是：验证某个用户是否为系统中的合法主体，也就是说用户能否访问该系统。用户认证一般要求用户提供用户名和密码，系统通过校验用户名和密码来完成认证过程。<br>
 **通俗点说就是系统认为用户是否能登录**<br>
@@ -195,16 +200,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 ```
 `SecurityContextHolder`原理非常简单，就是使用`ThreadLocal`来保证一个线程中传递同一个对象！<br>
-**用户认证**<br>
-**`AuthenticationManager`** 就是Spring Security用于执行身份验证的组件，只需要调用它的`authenticate`方法即可完成认证。<br>
-`AuthenticationManager`的校验逻辑<br>
-   1.`UserDetialsService`根据用户名查询出用户对象，该接口只有一个方法`loadUserByUsername(String username)`，通过用户名查询用户对象，默认实现是在内存中查询。<br>
-   2.查询出来的 **用户对象** 是由**`UserDetails`**来封装，该接口中提供了账号、密码等通用属性。<br>
-   3.PasswordEncoder组件对密码进行校验。<br>
-这里我们自定义实现UserDetialsService，UserDetails，PasswordEncoder三个组件，分别为UserDetailsServiceImpl，CustomUser，CustomMd5PasswordEncoder，存放于security-util模块中的com.wu.security.custom包下。<br>
-UserDetailsServiceImpl实现UserDetialsService接口，CustomUser继承org.springframework.security.core.userdetails.User，CustomMd5PasswordEncoder实现PasswordEncoder接口<br>
 
-自定义用户认证接口TokenLoginFilter继承UsernamePasswordAuthenticationFilter
+`AuthenticationManager` 就是Spring Security用于执行身份验证的组件，只需要调用它的`authenticate`方法即可完成认证。<br>
+`AuthenticationManager`的校验逻辑<br>
+   * 1、**`UserDetialsService`**根据用户名查询出用户对象，该接口只有一个方法`loadUserByUsername(String username)`，通过用户名查询用户对象，默认实现是在内存中查询。<br>
+   * 2、查询出来的用户对象是由**`UserDetails`**来封装，该接口中提供了账号、密码等通用属性。<br>
+   * 3、**PasswordEncoder**组件对密码进行校验。<br>
+这里我们自定义实现UserDetialsService，UserDetails，PasswordEncoder三个组件，分别为UserDetailsServiceImpl，CustomUser，CustomMd5PasswordEncoder，存放于security-util模块中的com.wu.security.custom包下。<br>
+UserDetailsServiceImpl实现UserDetialsService接口，<br>
+CustomUser继承org.springframework.security.core.userdetails.User，<br>
+CustomMd5PasswordEncoder实现PasswordEncoder接口<br>
+
+**自定义用户认证接口TokenLoginFilter继承UsernamePasswordAuthenticationFilter<br>**
 ```Java
 package com.wu.security.fillter;
 import com.alibaba.fastjson.JSON;
@@ -290,7 +297,6 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         //保存权限数据
         redisTemplate.opsForValue().set(customUser.getUsername(), JSON.toJSONString(customUser.getAuthorities()));
         Map<String, Object> map = new HashMap<>();
-//        System.out.println(".........................登入成功");
         map.put("token", token);
         ResponseUtil.out(response, Result.ok(map));
     }
@@ -310,5 +316,207 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 }
 ```
+**自定义解析token类TokenAuthenticationFilter，继承于 OncePerRequestFilter**
+```Java
+package com.wu.security.fillter;
 
+import com.alibaba.fastjson.JSON;
+import com.wu.common.config.exception.WuException;
+import com.wu.common.jwt.JwtHelper;
+import com.wu.common.result.Result;
+import com.wu.common.result.ResultCodeEnum;
+import com.wu.common.util.ResponseUtil;
+import com.wu.security.custom.LoginUserInfoHelper;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @ Author     ：ChuiMao Wu
+ * @ create     : 2023-04-08 20:11
+ * @ Description：用来判断是否已经登入,是登入路径则到TokenLoginFilter校验，不是登入路径则判断是否有token，有token再通过token获取用户名进而获取菜单权限和按钮权限，无则无法获取信息
+ */
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
+
+    private RedisTemplate redisTemplate;
+
+    public TokenAuthenticationFilter(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+
+        logger.info("uri:"+request.getRequestURI());
+        //如果是登录接口，直接放行
+        if("/admin/system/index/login".equals(request.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
+        if(null != authentication) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            chain.doFilter(request, response);
+        } else {
+            ResponseUtil.out(response, Result.build(null, ResultCodeEnum.LOGIN_AUTH));
+        }
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        // token置于header里
+        String token = request.getHeader("token");
+        logger.info("token:"+token);
+        if (!StringUtils.isEmpty(token)) {
+            String username = JwtHelper.getUsername(token);
+            logger.info("useruame:"+username);
+            if (!StringUtils.isEmpty(username)) {
+                //通过ThreadLocal记录当前登录人信息
+                LoginUserInfoHelper.setUserId(JwtHelper.getUserId(token));
+                LoginUserInfoHelper.setUsername(username);
+
+                //通过userName从redis中获取权限数据
+                String authoritiesString = (String) redisTemplate.opsForValue().get(username);
+                //把redis中的字符串权限数据转换为要求的集合类型List<SimpleGrantedAuthority>
+                List<Map> mapList = JSON.parseArray(authoritiesString, Map.class);
+                if(CollectionUtils.isEmpty(mapList)){
+                    throw new WuException(ResultCodeEnum.LOGIN_AUTH);
+                }
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                for (Map map : mapList) {
+                    authorities.add(new SimpleGrantedAuthority((String)map.get("authority")));
+                }
+                return new UsernamePasswordAuthenticationToken(username, null, authorities);
+            }else {
+                return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+            }
+        }
+        return null;
+    }
+}
+```
+**修改WebSecurityConfig配置类**
+```Java
+package com.wu.security.config;
+
+import com.wu.security.custom.CustomMd5PasswordEncoder;
+import com.wu.security.custom.UserDetailsService;
+import com.wu.security.fillter.TokenAuthenticationFilter;
+import com.wu.security.fillter.TokenLoginFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+/**
+ * @ Author     ：ChuiMao Wu
+ * @ create     : 2023-04-08 17:40
+ * @ Description：
+ */
+@Configuration
+@EnableWebSecurity //@EnableWebSecurity是开启SpringSecurity的默认行为
+@EnableGlobalMethodSecurity(prePostEnabled = true) //开启基于方法的安全认证机制，也就是说在web层的controller启用注解机制的安全确认
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private CustomMd5PasswordEncoder customMd5PasswordEncoder;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // 这是配置的关键，决定哪些接口开启防护，哪些接口绕过防护
+        http
+                //关闭csrf跨站请求伪造
+                .csrf().disable()
+                // 开启跨域以便前端调用接口
+                .cors().and()
+                .authorizeRequests()
+                // 指定某些接口不需要通过验证即可访问。登陆接口肯定是不需要认证的
+                .antMatchers("/admin/system/index/login").permitAll()
+                // 这里意思是其它所有接口需要认证才能访问
+                .anyRequest().authenticated()
+                .and()
+                //TokenAuthenticationFilter放到UsernamePasswordAuthenticationFilter的前面，这样做就是为了除了登录的时候去查询数据库外，其他时候都用token进行认证。
+                .addFilterBefore(new TokenAuthenticationFilter(redisTemplate), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new TokenLoginFilter(authenticationManager(), redisTemplate));
+
+        //禁用session
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // 指定UserDetailService和加密器
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(customMd5PasswordEncoder);
+    }
+
+    /**
+     * 配置哪些请求不拦截
+     * 排除swagger相关请求
+     * @param web
+     * @throws Exception
+     */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/admin/modeler/**","/diagram-viewer/**","/editor-app/**","/*.html",
+                "/admin/processImage/**",
+                "/admin/wechat/authorize","/admin/wechat/userInfo","/admin/wechat/bindPhone",
+                "/favicon.ico","/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/doc.html");
+    }
+}
+```
 **4.4.2用户授权**<br>
+在SpringSecurity中，会使用默认的FilterSecurityInterceptor来进行权限校验。在FilterSecurityInterceptor中会从SecurityContextHolder获取其中的**Authentication**，然后获取其中的权限信息。判断当前用户是否拥有访问当前资源所需的权限。<br>
+在TokenLoginFilter中登录成功时，我们把权限数据保存到redis中（用户名为key，权限数据为value），已经登入的情况下在TokenAuthenticationFilter中通过token获取用户名再通过redis即可拿到权限数据，这样就可构成出完整的Authentication对象。<br>
+**Spring Security默认是禁用注解的，要想开启注解，需要在继承WebSecurityConfigurerAdapter的类上加@EnableGlobalMethodSecurity注解，来判断用户对某个控制层的方法是否具有访问权限**<br>
+通过@PreAuthorize标签控制controller层接口权限，例如：<br>
+```Java
+ @PreAuthorize("hasAuthority('bnt.sysRole.list')")
+ @ApiOperation(value = "获取")
+ @GetMapping("get/{id}")
+ public Result get(@PathVariable Long id) {
+     SysRole role = sysRoleService.getById(id);
+     return Result.ok(role);
+ }
+
+ @PreAuthorize("hasAuthority('bnt.sysRole.add')")
+ @ApiOperation(value = "新增角色")
+ @PostMapping("save")
+ public Result save(@RequestBody @Validated SysRole role) {
+     sysRoleService.save(role);
+     return Result.ok();   
+```
+只有拥有该权限才能访问该Controller
