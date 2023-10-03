@@ -567,5 +567,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 3. 微信端使用内网穿透对员工端前端页面wu-co-web进行访问，和对后端Controller进行访问，流程如图<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/inner.jpg)<br>
 4. 后端中需要实现微信的登入验证<br>
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/inner.jpg)<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/wechat-login.jpg)<br>
 **具体设置参考文件 /参考资料/微信公众号.md**
