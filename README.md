@@ -1,4 +1,4 @@
-![1696330775120](https://github.com/wuchuimao/CloudOffice/assets/80452098/517857df-fb75-4dff-b9ef-7302d1faf95a)# CloudOffice
+# CloudOffice
 * [一、项目介绍](#一项目介绍)<br>
 * [二、搭建环境](#二搭建环境)<br>
     * [1.项目模块](#1项目模块)<br>
@@ -566,6 +566,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/wechat-menu.jpg)<br>
 3. 微信端使用内网穿透对员工端前端页面wu-co-web进行访问，和对后端Controller进行访问，流程如图<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/inner.jpg)<br>
-4.后端中需要实现微信的登入验证<br>
+4. 后端中需要实现微信的登入验证<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/inner.jpg)<br>
 **具体设置参考文件 /参考资料/微信公众号.md**
