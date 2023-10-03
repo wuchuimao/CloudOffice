@@ -1,4 +1,4 @@
-# CloudOffice
+![1696330775120](https://github.com/wuchuimao/CloudOffice/assets/80452098/517857df-fb75-4dff-b9ef-7302d1faf95a)# CloudOffice
 * [一、项目介绍](#一项目介绍)<br>
 * [二、搭建环境](#二搭建环境)<br>
     * [1.项目模块](#1项目模块)<br>
@@ -14,6 +14,10 @@
         * [4.2用户登入](#42用户登入)
         * [4.3获取用户信息](#43获取用户信息)
         * [4.4SpringSecurity](#44SpringSecurit)
+    * [5.审批设置](#5审批设置)
+    * [6.审批管理](#6审批管理)
+    * [7.审批流程的申请和处理](#7审批流程的申请和处理)
+    * [8.整合微信公众号](#8整合微信公众号)
 ## 一、项目介绍
 系统主要包括：管理端和员工端<br>
 
@@ -44,9 +48,9 @@
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login.jpg)<br>
 管理端界面<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/front.jpg)<br>
-前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目；
+（员工端）前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目；
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/web.jpg)<br>
-前端审批界面
+（员工端）前端审批界面
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approve.jpg)<br>
 前端界面具体配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。<br>
 ## 四、后端功能实现
@@ -151,9 +155,11 @@ admin用户显示的的界面（所有权限都有）<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/admin-permission.jpg)<br>
 wjl用户显示的界面（只有用户管理和菜单管理的部分权限）
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/wjl-permission.jpg)<br>
-未使用SpringSecurity时访问存在问题
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/IndexController.jpg)<br>
 #### 4.4SpringSecurity<br>
+未使用SpringSecurity时访问存在问题<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/IndexController.jpg)<br>
+使用SpringSecurity后，解决该问题。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/SpringSecurity.jpg)<br>
 Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案， SpringSecurity 重要核心功能为用户认证指和用户授权。<br>
 用户认证指的是：验证某个用户是否为系统中的合法主体，也就是说用户能否访问该系统。用户认证一般要求用户提供用户名和密码，系统通过校验用户名和密码来完成认证过程。<br>
 **通俗点说就是系统认为用户是否能登录**<br>
@@ -520,3 +526,46 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      return Result.ok();   
 ```
 只有拥有该权限才能访问该Controller
+### 5.审批设置
+审批设置模块包含：审批类型与审批模板
+审批类型：审批类型即为审批的分类，如：出勤、人事、财务等
+审批模板：设置具体审批的基本信息、表单信息与审批流程定义，审批流涉及工作流引擎Activiti，常见的审批模板如：加班、出差、请假、费用报销等，我们可以根据公司具体业务配置具体的审批模板
+**管理端页面效果**
+1. 审批类型<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-type.jpg)<br>
+2. 审批模板<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-template.jpg)<br>
+3. 在线流程设计<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/process-design.jpg)<br>
+**员工端页面效果**
+1. 审批中心<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-center.jpg)<br>
+2. 发起审批，显示动态表单<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-form.jpg)<br>
+**对于审批模板中，审批流程的设计是使用activiti，具体参考 /参考资料/activiti.md文件；对于审批类型和模块的增删改查具体的后端代码，存放于service-co模块的com.wu.process包下ProcessTypeController.java和ProcessTemplateController**<br>
+### 6.审批管理
+审批管理是是在管理端查看和处理员工申请的审批流程，对应的后端代码在service-co模块的com.wu.process包下的ProcessController.java<br>
+管理端页面效果<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-manager.jpg)<br>
+### 7.审批流程的申请和处理
+通过前端项目wu-co-web发起审批流程的申请和处理，后期将该前端页面整合到微信公众中。<br>
+（本地测试阶段需将wu-co-web项目中的utils/request.js中的baseURL改为http://localhost:8800；App.vue中将create方法内容注释掉；在/views中添加test.vue,再里面进行给进行token的添加和用户切换）<br>
+前端（测试）：<br>
+首先访问http://localhost:9090/#/test，获取token，有token才能是登入状态，才能访问<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/test-vue.jpg)<br>
+再访问http://localhost:9090/#/，进行审批的申请，测试时页面在本地浏览器显示所以比例不对，后期是在微信端显示。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/apply.jpg)<br>
+访问http://localhost:9090/#/list/1,http://localhost:9090/#/list/2,http://localhost:9090/#/list/3分别为已处理审批，已发起审批，待处理审批。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/processed-approval.jpg)<br>
+后端实现，实现代码在service-co模块的com.wu.process.api包下ProcessApiController.java中，后端实现流程如图：<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-process.jpg)<br>
+### 8.整合微信公众号
+审批流程的申请和处理在7中只是在本地实现了相关功能，要实现在微信端进行审批流程的申请和处理还需进行一下几步。<br>
+1. 申请公众号<br>
+2. 实现管理端中微信菜单的增删改查和同步到微信中，后端同步菜单使用weixin-java-mp工具。<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/wechat-menu.jpg)<br>
+3. 微信端使用内网穿透对员工端前端页面wu-co-web进行访问，和对后端Controller进行访问，流程如图<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/inner.jpg)<br>
+4.后端中需要实现微信的登入验证<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/inner.jpg)<br>
+**具体设置参考文件 /参考资料/微信公众号.md**
