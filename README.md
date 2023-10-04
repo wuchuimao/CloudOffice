@@ -26,6 +26,8 @@
 
 项目服务器端架构：SpringBoot，MybatisPlus，SpringSecurity，Redis，Activiti，MySQL<br>
 前端架构：vue-admin-template，Node.js， Npm，ElementUI，Axios<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.gif)<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval.gif)<br>
 ## 二、搭建环境
 ### 1.项目模块
 * cloud_office：根目录，管理子模块<br>
@@ -41,8 +43,6 @@
 使用SQLyog执行 /database/表结构.sql 文件，创建所需要的表。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.jpg)<br>
 ## 三、前端界面
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.gif)<br>
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval.gif)<br>
 前端界面在 cloud_office_front中。<br>
 管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目(运行前要安装Node.js,然后安装依赖 npm install)；<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.jpg)<br>
