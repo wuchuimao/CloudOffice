@@ -41,6 +41,8 @@
 使用SQLyog执行 /database/表结构.sql 文件，创建所需要的表。<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.jpg)<br>
 ## 三、前端界面
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.gif)<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval.gif)<br>
 前端界面在 cloud_office_front中。<br>
 管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目(运行前要安装Node.js,然后安装依赖 npm install)；<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.jpg)<br>
@@ -48,7 +50,7 @@
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login-front.jpg)<br>
 管理端界面<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/front.jpg)<br>
-（员工端）前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目；
+（员工端）前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目(运行前要安装Node.js,然后安装依赖 npm install)；
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/web.jpg)<br>
 （员工端）前端审批界面
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-center.jpg)<br>
