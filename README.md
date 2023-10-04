@@ -42,16 +42,16 @@
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/database.jpg)<br>
 ## 三、前端界面
 前端界面在 cloud_office_front中。<br>
-管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目；<br>
+管理端页面项目为wu-auth-ui，在VS Code中使用命令行npm run dev运行该项目(运行前要安装Node.js,然后安装依赖 npm install)；<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/ui.jpg)<br>
 管理端登入界面<br>
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login.jpg)<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/login-front.jpg)<br>
 管理端界面<br>
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/front.jpg)<br>
 （员工端）前端审批页面为项目为wu-co-web，在VS Code中使用命令行npm run server运行该项目；
 ![](https://github.com/wuchuimao/CloudOffice/raw/master/images/web.jpg)<br>
 （员工端）前端审批界面
-![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approve.jpg)<br>
+![](https://github.com/wuchuimao/CloudOffice/raw/master/images/approval-center.jpg)<br>
 前端界面具体配置查看文件 /参考文件/前端知识.md，/参考文件/角色管理前端界面.md。<br>
 ## 四、后端功能实现
 ### 1.用户管理
